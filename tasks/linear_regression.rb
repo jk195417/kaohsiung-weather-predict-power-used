@@ -22,14 +22,14 @@ CSV.foreach(file) do |row|
 end
 
 x.first.size.times do |col|
-  fig = plt.figure()
+  fig = plt.figure
   x_data = x.map { |row| row[col] }
-  y_data = y.map{ |row| row/100000000 }
+  y_data = y.map { |row| row / 100_000_000 }
   plt.scatter(x_data, y_data)
   plt.xlabel("x#{col}")
-  plt.ylabel("actually power used")
+  plt.ylabel('actually power used')
   plt.title("actually power used vs x#{col}")
-  fig.savefig("#{Pathname.pwd.join('result_images','actually power used vs x' + col.to_s)}")
+  fig.savefig(Pathname.pwd.join('result', 'images', 'actually power used vs x' + col.to_s).to_s)
 end
 
 results = []
@@ -59,22 +59,37 @@ puts "\nthe average mean squared error: #{avg_mean_squared_error_score}"
 puts "the average variance score: #{avg_variance_score}"
 puts "the average r squared: #{avg_r_squared_score}"
 
+CSV.open(Pathname.pwd.join('result', 'average.csv'), "wb") do |csv|
+  csv << ['average mean squared error', avg_mean_squared_error_score]
+  csv << ['average variance score', avg_variance_score]
+  csv << ['average r squared', avg_r_squared_score]
+end
+
 puts "\nfinding the best linear regression formula..."
-best_model =  results.max_by{ |a| a[3].to_f }
-puts "the coefficients:"
+best_model = results.max_by { |a| a[3].to_f }
+puts 'the coefficients:'
 best_model[0].coef_.size.times do |index|
-  puts "\tx#{index}: #{best_model[0].coef_[index]}" # FIXME: pycall return array object is not a ruby Array, so can't use iterator
+  puts "\tx#{index}: #{best_model[0].coef_[index]}"
 end
 puts "the mean squared error: #{best_model[1]}"
 puts "the variance score: #{best_model[2]}"
 puts "the r squared: #{best_model[3]}"
 
-fig = plt.figure()
+CSV.open(Pathname.pwd.join('result', 'best.csv'), "wb") do |csv|
+  best_model[0].coef_.size.times do |index|
+    csv << ["coefficient x#{index}", best_model[0].coef_[index]]
+  end
+  csv << ['mean squared error', best_model[1]]
+  csv << ['variance score', best_model[2]]
+  csv << ['r squared', best_model[3]]
+end
+
+fig = plt.figure
 plt.scatter(y, best_model[0].predict(x))
 plt.plot(y, y)
-plt.xlabel("actually power used")
-plt.ylabel("power used prediction")
-plt.title("actually power used vs power used_prediction")
-fig.savefig("#{Pathname.pwd.join('result_images','actually_power_used_vs_power_used_prediction.png')}")
+plt.xlabel('actually power used')
+plt.ylabel('power used prediction')
+plt.title('actually power used vs power used_prediction')
+fig.savefig(Pathname.pwd.join('result', 'images', 'actually_power_used_vs_power_used_prediction.png').to_s)
 
-plt.show()
+plt.show
