@@ -24,7 +24,7 @@ end
 x.first.size.times do |col|
   fig = plt.figure
   x_data = x.map { |row| row[col] }
-  y_data = y.map { |row| row / 100_000_000 }
+  y_data = y.map { |row| row }
   plt.scatter(x_data, y_data)
   plt.xlabel("x#{col}")
   plt.ylabel('actually power used')

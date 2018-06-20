@@ -21,10 +21,10 @@ class WeatherPower
   end
 
   def to_y
-    @kwh
+    Math.log10(@kwh)
   end
 
   def to_a
-    [@kwh, @avg_t, @max_t, @min_t, @avg_rh, @rain_vol]
+    [Math.log10(@kwh), @avg_t, @max_t, @min_t, @avg_rh, @rain_vol]
   end
 end
